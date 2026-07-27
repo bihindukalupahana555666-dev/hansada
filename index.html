@@ -232,7 +232,8 @@
     <div class="side-container side-right" id="sideRight"></div>
 
     <!-- PAGE MAIN TITLE -->
-    <h1 style="color: #ffffff; margin-bottom: 30px; text-align: center; letter-spacing: 2px;">🎓 SUBJECT WISE PERFORMANCE TRACKER</h1>
+    <h1 style="color: #ffffff; margin-bottom: 30px; text-align: center; letter-spacing: 2px;">🎓 SUBJECT WISE PERFORMANCE TRACKER</h1><br>
+    <h2 style="color: #d9ff00; margin-bottom: 30px; text-align: center; letter-spacing: 2px;">Programmer - K.P.B.HANSADA</h2>
 
     <!-- ⚛️ 1. PHYSICS CONTAINER (FULL SIZE) -->
     <div class="container" style="border-top: 5px solid #00ffcc;">
@@ -241,7 +242,7 @@
         <div class="input-panel" style="border-left: 5px solid #00ffcc;">
             <div class="input-group">
                 <label>Paper Name</label>
-                <input type="text" id="phyPaper" placeholder="EX: Physics Paper 01">
+                <input type="text" id="phyPaper" placeholder="EX: Accounting Paper 01">
             </div>
             <div class="input-group">
                 <label>Max Marks</label>
@@ -291,7 +292,7 @@
         <div class="input-panel" style="border-left: 5px solid #ffcc00;">
             <div class="input-group">
                 <label>Paper Name</label>
-                <input type="text" id="chemPaper" placeholder="EX: Chemistry Paper 01">
+                <input type="text" id="chemPaper" placeholder="EX: Paper 01">
             </div>
             <div class="input-group">
                 <label>Max Marks</label>
@@ -341,7 +342,7 @@
         <div class="input-panel" style="border-left: 5px solid #11ff00;">
             <div class="input-group">
                 <label>Paper Name</label>
-                <input type="text" id="mathsPaper" placeholder="EX: Combined Maths Paper 01">
+                <input type="text" id="mathsPaper" placeholder="EX:  Paper 01">
             </div>
             <div class="input-group">
                 <label>Max Marks</label>
@@ -654,21 +655,21 @@
 
         // 🌟 DATA INITIALIZATION FOR ALL 3 SUBJECTS
         let phyData = JSON.parse(localStorage.getItem('phyRecords')) || [
-            { id: 1, name: 'Physics Paper 1', max: 100, obtained: 58, percentage: 58.00 },
-            { id: 2, name: 'Physics Paper 2', max: 100, obtained: 70, percentage: 70.00 },
-            { id: 3, name: 'Physics Paper 3', max: 100, obtained: 85, percentage: 85.00 }
+            { id: 1, name: 'accounting Paper 1', max: 100, obtained: 58, percentage: 58.00 },
+            { id: 2, name: 'accounting Paper 2', max: 100, obtained: 70, percentage: 70.00 },
+            { id: 3, name: 'accounting Paper 3', max: 100, obtained: 85, percentage: 85.00 }
         ];
 
         let chemData = JSON.parse(localStorage.getItem('chemRecords')) || [
-            { id: 1, name: 'Chemistry Paper 1', max: 100, obtained: 62, percentage: 62.00 },
-            { id: 2, name: 'Chemistry Paper 2', max: 100, obtained: 74, percentage: 74.00 },
-            { id: 3, name: 'Chemistry Paper 3', max: 100, obtained: 90, percentage: 90.00 }
+            { id: 1, name: 'bs Paper 1', max: 100, obtained: 62, percentage: 62.00 },
+            { id: 2, name: 'bs Paper 2', max: 100, obtained: 74, percentage: 74.00 },
+            { id: 3, name: 'bs Paper 3', max: 100, obtained: 90, percentage: 90.00 }
         ];
 
         let mathsData = JSON.parse(localStorage.getItem('mathsRecords')) || [
-            { id: 1, name: 'Combined Maths Paper 1', max: 100, obtained: 52, percentage: 52.00 },
-            { id: 2, name: 'Combined Maths Paper 2', max: 100, obtained: 68, percentage: 68.00 },
-            { id: 3, name: 'Combined Maths Paper 3', max: 100, obtained: 82, percentage: 82.00 }
+            { id: 1, name: 'ict Paper 1', max: 100, obtained: 52, percentage: 52.00 },
+            { id: 2, name: 'ict Paper 2', max: 100, obtained: 68, percentage: 68.00 },
+            { id: 3, name: 'ict Paper 3', max: 100, obtained: 82, percentage: 82.00 }
         ];
 
         // Create Charts
