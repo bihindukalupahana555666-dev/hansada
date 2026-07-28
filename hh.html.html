@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Subject Wise Performance Analytics & Fireworks</title>
+    <!-- Chart.js ?? Annotation Plugin ?? -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@2.2.0/dist/chartjs-plugin-annotation.min.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            padding: 20px 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* ?? ???????? ??? ?????? (Side Fireworks Containers) */
+        .side-container {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            width: 80px;
+            pointer-events: none;
+            z-index: 9999;
+            overflow: hidden;
+        }
+        .side-left { left: 0; }
+        .side-right { right: 0; }
+
+        /* ????? ?? (Rocket going up) */
+        .firework-rocket {
+            position: absolute;
+            width: 4px;
+            height: 22px;
+            background: linear-gradient(to top, transparent, #ffffff, #00ffcc);
+            border-radius: 50%;
+            box-shadow: 0 0 12px #00ffcc, 0 0 20px #00ffcc;
+            transform: translateX(-50%);
+            pointer-events: none;
+        }
+
+        /* ??????? ??????? 'A' ????? (Exploding A Particles) */
+        .exploding-a {
+            position: absolute;
+            font-weight: 900;
+            font-family: 'Arial Black', sans-serif;
+            font-size: 26px;
+            pointer-events: none;
+            user-select: none;
+            transform: translate(-50%, 50%);
+        }
+
+        /* Main Section Container (Full Size) */
+        .container {
+            width: 100%;
+            max-width: 1100px;
+            background-color: #1e1e1e;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.7);
+            margin-bottom: 40px;
+        }
+        .subject-header {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Input Form */
+        .input-panel {
+            background-color: #2a2a2a;
+            padding: 20px;
+            border-radius: 8px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 25px;
+        }
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-width: 180px;
+        }
+        label {
+            font-size: 13px;
+            color: #cccccc;
+            margin-bottom: 5px;
+        }
+        input {
+            padding: 12px 10px;
+            border-radius: 5px;
+            border: 1px solid #444;
+            background-color: #121212;
+            color: #fff;
+            font-size: 15px;
+            outline: none;
+            transition: 0.3s;
+            width: 100%;
+        }
+        input:focus {
+            border-color: #00ffcc;
+            box-shadow: 0 0 8px rgba(0, 255, 204, 0.4);
+        }
+        .add-btn {
+            padding: 12px 25px;
+            color: #000;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 15px;
+            cursor: pointer;
+            transition: 0.3s;
+            height: 44px;
+            align-self: flex-end;
+            white-space: nowrap;
+        }
+        .add-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
+        }
+
+        /* Chart Section (Large Height on Desktop) */
+        .chart-container {
+            position: relative;
+            height: 430px;
+            width: 100%;
+        }
+
+        /* Toggle Button */
+        .toggle-btn {
+            margin-top: 25px;
+            background: #181818;
+            border: 2px solid;
+            width: 100%;
+            padding: 14px;
+            font-size: 15px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Table Section */
+        .table-section {
+            margin-top: 15px;
+            width: 100%;
+            display: none;
+            background: #282828;
+            padding: 20px;
+            border-radius: 8px;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Table Responsive Wrapper for Phone Scrolling */
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin-top: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px; /* ??????: ???? ??????? ????? ?????? ????? */
+            color: #fff;
+        }
+        th, td {
+            padding: 12px 10px;
+            text-align: center;
+            border-bottom: 1px solid #383838;
+        }
+        th {
+            background-color: #121212;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+        tr:hover { background-color: #333333; }
+        .badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            display: inline-block;
+            white-space: nowrap;
+        }
+        .badge-safe { background: rgba(41, 204, 151, 0.2); color: #00ffcc; border: 1px solid #00ffcc; }
+        .badge-youcan { background: rgba(255, 204, 0, 0.2); color: #ffcc00; border: 1px solid #ffcc00; }
+        .badge-risk { background: rgba(255, 77, 77, 0.2); color: #ff4d4d; border: 1px solid #ff4d4d; }
+        
+        .del-btn {
+            background: #ff4d4d;
+            color: #fff;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+        .del-btn:hover { background: #cc0000; }
+        
+        .reset-btn {
+            background: #ff3333;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin-top: 15px;
+            cursor: pointer;
+            float: right;
+            font-weight: bold;
+        }
+        .clearfix::after { content: ""; clear: both; display: table; }
+
+        /* ========================================================
+           ?? MOBILE & TABLET RESPONSIVE STYLES (???? ???? ???????)
+           ======================================================== */
+        @media (max-width: 768px) {
+            body { padding: 10px 6px; }
+            h1 { font-size: 18px !important; margin-bottom: 15px !important; letter-spacing: 1px !important; }
+            h2 { font-size: 16px !important; margin-bottom: 20px !important; }
+            .container { padding: 15px 12px; margin-bottom: 25px; border-radius: 10px; }
+            .subject-header { font-size: 18px !important; margin-bottom: 15px; }
+            .input-panel { padding: 15px; gap: 12px; flex-direction: column; align-items: stretch; }
+            .input-group { width: 100%; min-width: 100%; }
+            .add-btn { width: 100%; margin-top: 5px; height: 46px; font-size: 16px; }
+            .chart-container { height: 280px !important; }
+            .toggle-btn { font-size: 13px; padding: 12px 8px; }
+            .table-section { padding: 15px 10px; }
+            .reset-btn { width: 100%; float: none; text-align: center; margin-top: 20px; }
+            .side-container { width: 40px; }
+            .exploding-a { font-size: 18px !important; }
+        }
+
+        @media (max-width: 400px) {
+            .chart-container { height: 250px !important; }
+            h1 { font-size: 16px !important; }
+            .subject-header { font-size: 16px !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ?? ???????? ??? ?????? ??????? Side Containers -->
+    <div class="side-container side-left" id="sideLeft"></div>
+    <div class="side-container side-right" id="sideRight"></div>
+
+    <!-- PAGE MAIN TITLE -->
+    <h1 style="color: #ffffff; margin-bottom: 10px; text-align: center; letter-spacing: 2px;">?? SUBJECT WISE PERFORMANCE TRACKER</h1>
+    <h2 style="color: #d9ff00; margin-bottom: 30px; text-align: center; letter-spacing: 2px;">Programmer - K.P.B.HANSADA</h2>
+
+    <!-- ?? 1. ACCOUNTING CONTAINER -->
+    <div class="container" style="border-top: 5px solid #00ffcc;">
+        <h2 class="subject-header" style="color: #00ffcc; text-shadow: 0 0 12px rgba(0, 255, 204, 0.5);">?? Accounting Performance Tracker</h2>
+
+        <div class="input-panel" style="border-left: 5px solid #00ffcc;">
+            <div class="input-group">
+                <label>Paper Name</label>
+                <input type="text" id="phyPaper" placeholder="EX: Accounting Paper 01">
+            </div>
+            <div class="input-group">
+                <label>Max Marks</label>
+                <input type="number" id="phyMax" placeholder="100" value="100">
+            </div>
+            <div class="input-group">
+                <label>Your Mark</label>
+                <input type="number" id="phyObtained" placeholder="EX: 75">
+            </div>
+            <button class="add-btn" style="background: linear-gradient(45deg, #00ffcc, #00cc99);" onclick="addSubjectRecord('phy')">+ Add To Accounting</button>
+        </div>
+
+        <div class="chart-container">
+            <canvas id="phyChart"></canvas>
+        </div>
+
+        <button class="toggle-btn" id="phyToggleBtn" style="color: #00ffcc; border-color: #00ffcc;" onclick="toggleTable('phyTableSection', 'phyToggleBtn', '#00ffcc', 'Accounting')">
+            ? Show Accounting Table
+        </button>
+
+        <div class="table-section" id="phyTableSection" style="border-top: 4px solid #00ffcc;">
+            <h3 style="color: #00ffcc; margin-bottom: 10px;">?? Accounting Score Summary</h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th style="text-align: left;">Paper Name</th>
+                            <th>Max mark</th>
+                            <th>Your mark</th>
+                            <th>presentage (%)</th>
+                            <th>Zone</th>
+                            <th>Remove</th>
+                        </tr>
+                    </thead>
+                    <tbody id="phyTableBody"></tbody>
+                </table>
+            </div>
+            <div class="clearfix">
+                <button class="reset-btn" onclick="resetSubjectData('phy')">?? Clear Accounting Data</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ?? 2. BUSINESS STUDIES CONTAINER -->
+    <div class="container" style="border-top: 5px solid #ffcc00;">
+        <h2 class="subject-header" style="color: #ffcc00; text-shadow: 0 0 12px rgba(255, 204, 0, 0.5);">?? Business Studies Performance Tracker</h2>
+
+        <div class="input-panel" style="border-left: 5px solid #ffcc00;">
+            <div class="input-group">
+                <label>Paper Name</label>
+                <input type="text" id="chemPaper" placeholder="EX: Paper 01">
+            </div>
+            <div class="input-group">
+                <label>Max Marks</label>
+                <input type="number" id="chemMax" placeholder="100" value="100">
+            </div>
+            <div class="input-group">
+                <label>Your Mark</label>
+                <input type="number" id="chemObtained" placeholder="EX: 80">
+            </div>
+            <button class="add-btn" style="background: linear-gradient(45deg, #ffcc00, #ffaa00);" onclick="addSubjectRecord('chem')">+ Add To B/S</button>
+        </div>
+
+        <div class="chart-container">
+            <canvas id="chemChart"></canvas>
+        </div>
+
+        <button class="toggle-btn" id="chemToggleBtn" style="color: #ffcc00; border-color: #ffcc00;" onclick="toggleTable('chemTableSection', 'chemToggleBtn', '#ffcc00', 'Business Studies')">
+            ? Show Business Studies Table
+        </button>
+
+        <div class="table-section" id="chemTableSection" style="border-top: 4px solid #ffcc00;">
+            <h3 style="color: #ffcc00; margin-bottom: 10px;">?? Business Studies Score Summary</h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th style="text-align: left;">Paper name</th>
+                            <th>Max mark</th>
+                            <th>Your Mark</th>
+                            <th>Percentage(%)</th>
+                            <th>Zone</th>
+                            <th>Remove</th>
+                        </tr>
+                    </thead>
+                    <tbody id="chemTableBody"></tbody>
+                </table>
+            </div>
+            <div class="clearfix">
+                <button class="reset-btn" onclick="resetSubjectData('chem')">?? Clear B/S Data</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ?? 3. ICT CONTAINER -->
+    <div class="container" style="border-top: 5px solid #11ff00;">
+        <h2 class="subject-header" style="color: #ffffff; text-shadow: 0 0 12px rgba(255, 255, 255, 0.5);">?? ICT Performance Tracker</h2>
+
+        <div class="input-panel" style="border-left: 5px solid #11ff00;">
+            <div class="input-group">
+                <label>Paper Name</label>
+                <input type="text" id="mathsPaper" placeholder="EX: Paper 01">
+            </div>
+            <div class="input-group">
+                <label>Max Marks</label>
+                <input type="number" id="mathsMax" placeholder="100" value="100">
+            </div>
+            <div class="input-group">
+                <label>Your Mark</label>
+                <input type="number" id="mathsObtained" placeholder="EX: 65">
+            </div>
+            <button class="add-btn" style="background: linear-gradient(45deg, #ed0000, #ff0000); color: #fff;" onclick="addSubjectRecord('maths')">+ Add To ICT</button>
+        </div>
+
+        <div class="chart-container">
+            <canvas id="mathsChart"></canvas>
+        </div>
+
+        <button class="toggle-btn" id="mathsToggleBtn" style="color: #11ff00; border-color: #11ff00;" onclick="toggleTable('mathsTableSection', 'mathsToggleBtn', '#11ff00', 'ICT')">
+            ? SHOW ICT TABLE
+        </button>
+
+        <div class="table-section" id="mathsTableSection" style="border-top: 4px solid #11ff00;">
+            <h3 style="color: #11ff00; margin-bottom: 10px;">?? ICT Score Summary</h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th style="text-align: left;">Paper name</th>
+                            <th>Max mark</th>
+                            <th>Your Mark</th>
+                            <th>Percentage(%)</th>
+                            <th>Zone</th>
+                            <th>Remove</th>
+                        </tr>
+                    </thead>
+                    <tbody id="mathsTableBody"></tbody>
+                </table>
+            </div>
+            <div class="clearfix">
+                <button class="reset-btn" onclick="resetSubjectData('maths')">?? Clear ICT Data</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        Chart.register(window['chartjs-plugin-annotation']);
+
+        // ?? 1. SIDE FIREWORKS + 'A' BURST ANIMATION LOGIC
+        function launchFirework(containerId) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+
+            const rocket = document.createElement('div');
+            rocket.className = 'firework-rocket';
+            
+            const maxW = container.clientWidth || 40;
+            const startX = Math.random() * (maxW - 20) + 10; 
+            rocket.style.left = startX + 'px';
+            rocket.style.bottom = '0px';
+            container.appendChild(rocket);
+
+            const targetY = window.innerHeight * (0.55 + Math.random() * 0.30);
+            const flightDuration = 1000 + Math.random() * 400;
+            const startTime = performance.now();
+
+            function animateRocket(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / flightDuration, 1);
+                const currentY = targetY * (1 - Math.pow(1 - progress, 2));
+                rocket.style.bottom = currentY + 'px';
+
+                if (progress < 1) {
+                    requestAnimationFrame(animateRocket);
+                } else {
+                    rocket.remove();
+                    explodeA(container, startX, currentY);
+                }
+            }
+            requestAnimationFrame(animateRocket);
+        }
+
+        function explodeA(container, centerX, centerY) {
+            const particleCount = window.innerWidth < 600 ? 7 : 10;
+            const colors = ['#00ffcc', '#ffcc00', '#00e676', '#ffffff', '#ff4d4d', '#ff00ff'];
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'exploding-a';
+                particle.innerText = 'A';
+                
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                particle.style.color = color;
+                particle.style.textShadow = `0 0 10px ${color}, 0 0 20px ${color}`;
+                particle.style.left = centerX + 'px';
+                particle.style.bottom = centerY + 'px';
+                
+                container.appendChild(particle);
+
+                const angle = (Math.PI * 2 / particleCount) * i + (Math.random() * 0.4 - 0.2);
+                const distance = (window.innerWidth < 600 ? 35 : 50) + Math.random() * 50; 
+                const targetX = centerX + Math.cos(angle) * distance;
+                const targetY = centerY + Math.sin(angle) * distance;
+
+                const explodeDuration = 1100;
+                const startTime = performance.now();
+
+                function animateParticle(currentTime) {
+                    const elapsed = currentTime - startTime;
+                    const progress = Math.min(elapsed / explodeDuration, 1);
+                    const curX = centerX + (targetX - centerX) * (1 - Math.pow(1 - progress, 3));
+                    const gravity = progress * progress * 30;
+                    const curY = centerY + (targetY - centerY) * (1 - Math.pow(1 - progress, 3)) - gravity;
+                    
+                    const scale = 0.8 + progress * 0.6;
+                    const opacity = 1 - progress;
+
+                    particle.style.left = curX + 'px';
+                    particle.style.bottom = curY + 'px';
+                    particle.style.transform = `translate(-50%, 50%) scale(${scale})`;
+                    particle.style.opacity = opacity;
+
+                    if (progress < 1) {
+                        requestAnimationFrame(animateParticle);
+                    } else {
+                        particle.remove();
+                    }
+                }
+                requestAnimationFrame(animateParticle);
+            }
+        }
+
+        function triggerSideFireworks() {
+            launchFirework('sideLeft');
+            setTimeout(() => {
+                launchFirework('sideRight');
+            }, 500);
+        }
+
+        triggerSideFireworks();
+        setInterval(triggerSideFireworks, 4500);
+
+        // ?? 2. LINE RUNNER PLUGIN & ZONE COLOR LOGIC
+        let pulseProgress = 0;
+
+        function getZoneColor(val) {
+            if (val < 65) return { rgb: '255, 77, 77', hex: '#ff4d4d' };
+            if (val < 75) return { rgb: '255, 204, 0', hex: '#ffcc00' };
+            return { rgb: '0, 255, 204', hex: '#00ffcc' };
+        }
+
+        const lineRunnerPlugin = {
+            id: 'lineRunner',
+            afterDraw(chart) {
+                const meta = chart.getDatasetMeta(0);
+                if (!meta || !meta.data || meta.data.length < 2) return;
+
+                const points = meta.data;
+                const yScale = chart.scales.y;
+                
+                let totalLength = 0;
+                const segmentLengths = [];
+                for (let i = 0; i < points.length - 1; i++) {
+                    const dx = points[i+1].x - points[i].x;
+                    const dy = points[i+1].y - points[i].y;
+                    const len = Math.sqrt(dx * dx + dy * dy);
+                    segmentLengths.push(len);
+                    totalLength += len;
+                }
+
+                if (totalLength === 0) return;
+
+                function getPointAtDistance(dist) {
+                    if (dist <= 0) return { x: points[0].x, y: points[0].y };
+                    if (dist >= totalLength) return { x: points[points.length - 1].x, y: points[points.length - 1].y };
+
+                    let currentDist = 0;
+                    for (let i = 0; i < segmentLengths.length; i++) {
+                        const len = segmentLengths[i];
+                        if (currentDist + len >= dist) {
+                            const segProgress = (dist - currentDist) / len;
+                            return {
+                                x: points[i].x + (points[i+1].x - points[i].x) * segProgress,
+                                y: points[i].y + (points[i+1].y - points[i].y) * segProgress
+                            };
+                        }
+                        currentDist += len;
+                    }
+                    return { x: points[points.length - 1].x, y: points[points.length - 1].y };
+                }
+
+                const ctx = chart.ctx;
+                ctx.save();
+                const currentDist = (pulseProgress % 1) * totalLength;
+
+                const trailCount = 15;
+                const trailSpan = 60;
+                for (let i = trailCount; i >= 0; i--) {
+                    const tDist = currentDist - (i * (trailSpan / trailCount));
+                    if (tDist < 0) continue;
+
+                    const pt = getPointAtDistance(tDist);
+                    const val = yScale.getValueForPixel(pt.y);
+                    const color = getZoneColor(val);
+                    const ratio = 1 - (i / trailCount);
+                    
+                    ctx.beginPath();
+                    ctx.arc(pt.x, pt.y, 2 + ratio * 5, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(${color.rgb}, ${ratio * 0.75})`;
+                    ctx.shadowColor = color.hex;
+                    ctx.shadowBlur = ratio * 12;
+                    ctx.fill();
+                }
+
+                const headPt = getPointAtDistance(currentDist);
+                const headVal = yScale.getValueForPixel(headPt.y);
+                const headColor = getZoneColor(headVal);
+
+                ctx.beginPath();
+                ctx.arc(headPt.x, headPt.y, 6, 0, Math.PI * 2);
+                ctx.fillStyle = '#ffffff';
+                ctx.shadowColor = headColor.hex;
+                ctx.shadowBlur = 20;
+                ctx.fill();
+
+                const pulseRadius = 10 + Math.sin(Date.now() / 120) * 3;
+                ctx.beginPath();
+                ctx.arc(headPt.x, headPt.y, pulseRadius, 0, Math.PI * 2);
+                ctx.strokeStyle = `rgba(${headColor.rgb}, 0.85)`;
+                ctx.lineWidth = 2.5;
+                ctx.shadowColor = headColor.hex;
+                ctx.shadowBlur = 15;
+                ctx.stroke();
+
+                ctx.restore();
+            }
+        };
+
+        Chart.register(lineRunnerPlugin);
+
+        // Chart Config Creator Function (With Responsive Font Sizes)
+        function buildFullChartConfig(accentHex) {
+            const isMobile = window.innerWidth < 600;
+            return {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Percentage (%)',
+                        data: [],
+                        borderColor: 'rgba(255, 255, 255, 0.4)',
+                        borderWidth: 2,
+                        pointBackgroundColor: '#ffffff',
+                        pointBorderColor: accentHex,
+                        pointBorderWidth: 3,
+                        pointRadius: isMobile ? 4 : 6,
+                        pointHoverRadius: isMobile ? 6 : 9,
+                        tension: 0,
+                        fill: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            ticks: { color: '#cccccc', font: { size: isMobile ? 10 : 12 } }
+                        },
+                        x: {
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                            ticks: { color: '#cccccc', font: { size: isMobile ? 10 : 12 } }
+                        }
+                    },
+                    plugins: {
+                        legend: { labels: { color: '#ffffff', font: { size: isMobile ? 11 : 13 } } },
+                        annotation: {
+                            annotations: {
+                                riskZone: {
+                                    type: 'box', yMin: 0, yMax: 65,
+                                    backgroundColor: 'rgba(255, 77, 77, 0.15)', borderWidth: 0,
+                                    label: { display: true, content: 'RISK (<65%)', position: 'start', color: '#ff4d4d', font: { size: isMobile ? 9 : 11, weight: 'bold' } }
+                                },
+                                youCanZone: {
+                                    type: 'box', yMin: 65, yMax: 75,
+                                    backgroundColor: 'rgba(255, 204, 0, 0.15)', borderWidth: 0,
+                                    label: { display: true, content: 'YOU CAN (65%-75%)', position: 'start', color: '#ffcc00', font: { size: isMobile ? 9 : 11, weight: 'bold' } }
+                                },
+                                safeZone: {
+                                    type: 'box', yMin: 75, yMax: 100,
+                                    backgroundColor: 'rgba(41, 204, 151, 0.15)', borderWidth: 0,
+                                    label: { display: true, content: 'SAFE (>75%)', position: 'start', color: '#00ffcc', font: { size: isMobile ? 9 : 11, weight: 'bold' } }
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+        }
+
+        // ?? DATA INITIALIZATION
+        let phyData = JSON.parse(localStorage.getItem('phyRecords')) || [
+            { id: 1, name: 'accounting Paper 1', max: 100, obtained: 58, percentage: 58.00 },
+            { id: 2, name: 'accounting Paper 2', max: 100, obtained: 70, percentage: 70.00 },
+            { id: 3, name: 'accounting Paper 3', max: 100, obtained: 85, percentage: 85.00 }
+        ];
+
+        let chemData = JSON.parse(localStorage.getItem('chemRecords')) || [
+            { id: 1, name: 'bs Paper 1', max: 100, obtained: 62, percentage: 62.00 },
+            { id: 2, name: 'bs Paper 2', max: 100, obtained: 74, percentage: 74.00 },
+            { id: 3, name: 'bs Paper 3', max: 100, obtained: 90, percentage: 90.00 }
+        ];
+
+        let mathsData = JSON.parse(localStorage.getItem('mathsRecords')) || [
+            { id: 1, name: 'ict Paper 1', max: 100, obtained: 52, percentage: 52.00 },
+            { id: 2, name: 'ict Paper 2', max: 100, obtained: 68, percentage: 68.00 },
+            { id: 3, name: 'ict Paper 3', max: 100, obtained: 82, percentage: 82.00 }
+        ];
+
+        const phyChart = new Chart(document.getElementById('phyChart').getContext('2d'), buildFullChartConfig('#00ffcc'));
+        const chemChart = new Chart(document.getElementById('chemChart').getContext('2d'), buildFullChartConfig('#ffcc00'));
+        const mathsChart = new Chart(document.getElementById('mathsChart').getContext('2d'), buildFullChartConfig('#ff4d4d'));
+
+        function animateRunners() {
+            pulseProgress += 0.003;
+            if (pulseProgress > 1) pulseProgress = 0;
+            
+            phyChart.draw();
+            chemChart.draw();
+            mathsChart.draw();
+
+            requestAnimationFrame(animateRunners);
+        }
+
+        function saveAllLocalStorage() {
+            localStorage.setItem('phyRecords', JSON.stringify(phyData));
+            localStorage.setItem('chemRecords', JSON.stringify(chemData));
+            localStorage.setItem('mathsRecords', JSON.stringify(mathsData));
+        }
+
+        function updateSubjectUI(key, dataset, chartObj, tableBodyId, accentColor) {
+            chartObj.data.labels = dataset.map(r => r.name);
+            chartObj.data.datasets[0].data = dataset.map(r => r.percentage);
+            chartObj.update();
+
+            const tbody = document.getElementById(tableBodyId);
+            tbody.innerHTML = '';
+
+            if (dataset.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="color: #888; padding: 20px;">??? ???? ??????? ?????? ?? ???.</td></tr>';
+                return;
+            }
+
+            dataset.forEach((rec, index) => {
+                let badgeClass = rec.percentage >= 75 ? 'badge-safe' : (rec.percentage >= 65 ? 'badge-youcan' : 'badge-risk');
+                let zoneText = rec.percentage >= 75 ? 'Safe Zone' : (rec.percentage >= 65 ? 'You Can' : 'Risk Zone');
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td style="font-weight: bold; text-align: left; color: #fff;">${rec.name}</td>
+                    <td>${rec.max}</td>
+                    <td>${rec.obtained}</td>
+                    <td style="color: ${accentColor}; font-weight: bold; font-size: 15px;">${rec.percentage}%</td>
+                    <td><span class="badge ${badgeClass}">${zoneText}</span></td>
+                    <td><button class="del-btn" onclick="deleteSubjectRecord('${key}', ${rec.id})">??? Remove</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function refreshAllUI() {
+            updateSubjectUI('phy', phyData, phyChart, 'phyTableBody', '#00ffcc');
+            updateSubjectUI('chem', chemData, chemChart, 'chemTableBody', '#ffcc00');
+            updateSubjectUI('maths', mathsData, mathsChart, 'mathsTableBody', '#11ff00');
+        }
+
+        function addSubjectRecord(subKey) {
+            const paperInput = document.getElementById(`${subKey}Paper`);
+            const maxInput = document.getElementById(`${subKey}Max`);
+            const obtainedInput = document.getElementById(`${subKey}Obtained`);
+
+            const name = paperInput.value;
+            const max = parseFloat(maxInput.value);
+            const obtained = parseFloat(obtainedInput.value);
+
+            if (!name || isNaN(max) || isNaN(obtained) || max <= 0) {
+                alert("??????? ?????? ??????? ???????? ?????? ?????!");
+                return;
+            }
+
+            const percentage = parseFloat(((obtained / max) * 100).toFixed(2));
+            const newRecord = { id: Date.now(), name, max, obtained, percentage };
+
+            if (subKey === 'phy') phyData.push(newRecord);
+            if (subKey === 'chem') chemData.push(newRecord);
+            if (subKey === 'maths') mathsData.push(newRecord);
+
+            saveAllLocalStorage();
+            refreshAllUI();
+
+            paperInput.value = '';
+            obtainedInput.value = '';
+            paperInput.focus();
+        }
+
+        function deleteSubjectRecord(subKey, id) {
+            if (confirm("Are You Sure Clear All Data")) {
+                if (subKey === 'phy') phyData = phyData.filter(r => r.id !== id);
+                if (subKey === 'chem') chemData = chemData.filter(r => r.id !== id);
+                if (subKey === 'maths') mathsData = mathsData.filter(r => r.id !== id);
+
+                saveAllLocalStorage();
+                refreshAllUI();
+            }
+        }
+
+        function resetSubjectData(subKey) {
+            if (confirm("??? ??? ????? ?????? ???? ??? ????? ????????")) {
+                if (subKey === 'phy') phyData = [];
+                if (subKey === 'chem') chemData = [];
+                if (subKey === 'maths') mathsData = [];
+
+                saveAllLocalStorage();
+                refreshAllUI();
+            }
+        }
+
+        function toggleTable(sectionId, btnId, colorHex, subTitle) {
+            const section = document.getElementById(sectionId);
+            const btn = document.getElementById(btnId);
+            
+            if (section.style.display === 'none' || section.style.display === '') {
+                section.style.display = 'block';
+                btn.innerHTML = `? Hide ${subTitle} Table`;
+                section.scrollIntoView({ behavior: 'smooth' });
+            } else {
+                section.style.display = 'none';
+                btn.innerHTML = `? Show ${subTitle} Table`;
+            }
+        }
+
+        refreshAllUI();
+        animateRunners();
+    </script>
+</body>
+</html>
