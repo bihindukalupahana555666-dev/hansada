@@ -2,9 +2,9 @@
 <html lang="si">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Subject Wise Performance Analytics & Fireworks</title>
-    <!-- Chart.js සහ Annotation Plugin එක -->
+    <!-- Chart.js ?? Annotation Plugin ?? -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@2.2.0/dist/chartjs-plugin-annotation.min.js"></script>
     
@@ -26,12 +26,12 @@
             position: relative;
         }
 
-        /* 🎆 දෙපැත්තේ මල් වෙඩිලි (Side Fireworks Containers) */
+        /* ?? ???????? ??? ?????? (Side Fireworks Containers) */
         .side-container {
             position: fixed;
             top: 0;
             bottom: 0;
-            width: 90px;
+            width: 80px;
             pointer-events: none;
             z-index: 9999;
             overflow: hidden;
@@ -39,7 +39,7 @@
         .side-left { left: 0; }
         .side-right { right: 0; }
 
-        /* රොකට් එක (Rocket going up) */
+        /* ????? ?? (Rocket going up) */
         .firework-rocket {
             position: absolute;
             width: 4px;
@@ -51,7 +51,7 @@
             pointer-events: none;
         }
 
-        /* පුපුරලා විසිවෙන 'A' අකුරු (Exploding A Particles) */
+        /* ??????? ??????? 'A' ????? (Exploding A Particles) */
         .exploding-a {
             position: absolute;
             font-weight: 900;
@@ -96,7 +96,7 @@
             display: flex;
             flex-direction: column;
             flex: 1;
-            min-width: 170px;
+            min-width: 180px;
         }
         label {
             font-size: 13px;
@@ -104,7 +104,7 @@
             margin-bottom: 5px;
         }
         input {
-            padding: 10px;
+            padding: 12px 10px;
             border-radius: 5px;
             border: 1px solid #444;
             background-color: #121212;
@@ -112,6 +112,7 @@
             font-size: 15px;
             outline: none;
             transition: 0.3s;
+            width: 100%;
         }
         input:focus {
             border-color: #00ffcc;
@@ -126,15 +127,16 @@
             font-size: 15px;
             cursor: pointer;
             transition: 0.3s;
-            height: 42px;
+            height: 44px;
             align-self: flex-end;
+            white-space: nowrap;
         }
         .add-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
         }
 
-        /* Chart Section (Large Height) */
+        /* Chart Section (Large Height on Desktop) */
         .chart-container {
             position: relative;
             height: 430px;
@@ -173,20 +175,29 @@
             from { opacity: 0; transform: translateY(-10px); }
             to { opacity: 1; transform: translateY(0); }
         }
+
+        /* Table Responsive Wrapper for Phone Scrolling */
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin-top: 10px;
+        }
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 10px;
+            min-width: 600px; /* ??????: ???? ??????? ????? ?????? ????? */
             color: #fff;
         }
         th, td {
-            padding: 12px;
+            padding: 12px 10px;
             text-align: center;
             border-bottom: 1px solid #383838;
         }
         th {
             background-color: #121212;
             font-size: 14px;
+            white-space: nowrap;
         }
         tr:hover { background-color: #333333; }
         .badge {
@@ -195,6 +206,7 @@
             font-size: 12px;
             font-weight: bold;
             display: inline-block;
+            white-space: nowrap;
         }
         .badge-safe { background: rgba(41, 204, 151, 0.2); color: #00ffcc; border: 1px solid #00ffcc; }
         .badge-youcan { background: rgba(255, 204, 0, 0.2); color: #ffcc00; border: 1px solid #ffcc00; }
@@ -208,6 +220,7 @@
             border-radius: 4px;
             cursor: pointer;
             font-size: 12px;
+            white-space: nowrap;
         }
         .del-btn:hover { background: #cc0000; }
         
@@ -223,21 +236,47 @@
             font-weight: bold;
         }
         .clearfix::after { content: ""; clear: both; display: table; }
+
+        /* ========================================================
+           ?? MOBILE & TABLET RESPONSIVE STYLES (???? ???? ???????)
+           ======================================================== */
+        @media (max-width: 768px) {
+            body { padding: 10px 6px; }
+            h1 { font-size: 18px !important; margin-bottom: 15px !important; letter-spacing: 1px !important; }
+            h2 { font-size: 16px !important; margin-bottom: 20px !important; }
+            .container { padding: 15px 12px; margin-bottom: 25px; border-radius: 10px; }
+            .subject-header { font-size: 18px !important; margin-bottom: 15px; }
+            .input-panel { padding: 15px; gap: 12px; flex-direction: column; align-items: stretch; }
+            .input-group { width: 100%; min-width: 100%; }
+            .add-btn { width: 100%; margin-top: 5px; height: 46px; font-size: 16px; }
+            .chart-container { height: 280px !important; }
+            .toggle-btn { font-size: 13px; padding: 12px 8px; }
+            .table-section { padding: 15px 10px; }
+            .reset-btn { width: 100%; float: none; text-align: center; margin-top: 20px; }
+            .side-container { width: 40px; }
+            .exploding-a { font-size: 18px !important; }
+        }
+
+        @media (max-width: 400px) {
+            .chart-container { height: 250px !important; }
+            h1 { font-size: 16px !important; }
+            .subject-header { font-size: 16px !important; }
+        }
     </style>
 </head>
 <body>
 
-    <!-- 🎆 දෙපැත්තේ මල් වෙඩිලි පිපිරෙන Side Containers -->
+    <!-- ?? ???????? ??? ?????? ??????? Side Containers -->
     <div class="side-container side-left" id="sideLeft"></div>
     <div class="side-container side-right" id="sideRight"></div>
 
     <!-- PAGE MAIN TITLE -->
-    <h1 style="color: #ffffff; margin-bottom: 30px; text-align: center; letter-spacing: 2px;">🎓 SUBJECT WISE PERFORMANCE TRACKER</h1><br>
+    <h1 style="color: #ffffff; margin-bottom: 10px; text-align: center; letter-spacing: 2px;">?? SUBJECT WISE PERFORMANCE TRACKER</h1>
     <h2 style="color: #d9ff00; margin-bottom: 30px; text-align: center; letter-spacing: 2px;">Programmer - K.P.B.HANSADA</h2>
 
-    <!-- ⚛️ 1. PHYSICS CONTAINER (FULL SIZE) -->
+    <!-- ?? 1. ACCOUNTING CONTAINER -->
     <div class="container" style="border-top: 5px solid #00ffcc;">
-        <h2 class="subject-header" style="color: #00ffcc; text-shadow: 0 0 12px rgba(0, 255, 204, 0.5);">⚛️ Accounting Performance Tracker</h2>
+        <h2 class="subject-header" style="color: #00ffcc; text-shadow: 0 0 12px rgba(0, 255, 204, 0.5);">?? Accounting Performance Tracker</h2>
 
         <div class="input-panel" style="border-left: 5px solid #00ffcc;">
             <div class="input-group">
@@ -259,35 +298,37 @@
             <canvas id="phyChart"></canvas>
         </div>
 
-        <button class="toggle-btn" id="phyToggleBtn" style="color: #00ffcc; border-color: #00ffcc;" onclick="toggleTable('phyTableSection', 'phyToggleBtn', '#00ffcc', 'Physics')">
-            ▼ Show Accounting Table)
+        <button class="toggle-btn" id="phyToggleBtn" style="color: #00ffcc; border-color: #00ffcc;" onclick="toggleTable('phyTableSection', 'phyToggleBtn', '#00ffcc', 'Accounting')">
+            ? Show Accounting Table
         </button>
 
         <div class="table-section" id="phyTableSection" style="border-top: 4px solid #00ffcc;">
-            <h3 style="color: #00ffcc; margin-bottom: 10px;">📊 Accounting Score Summary</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th style="text-align: left;">Paper Name</th>
-                        <th>Max mark</th>
-                        <th>Your mark</th>
-                        <th>presentage (%)</th>
-                        <th>Zone</th>
-                        <th>Remove</th>
-                    </tr>
-                </thead>
-                <tbody id="phyTableBody"></tbody>
-            </table>
+            <h3 style="color: #00ffcc; margin-bottom: 10px;">?? Accounting Score Summary</h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th style="text-align: left;">Paper Name</th>
+                            <th>Max mark</th>
+                            <th>Your mark</th>
+                            <th>presentage (%)</th>
+                            <th>Zone</th>
+                            <th>Remove</th>
+                        </tr>
+                    </thead>
+                    <tbody id="phyTableBody"></tbody>
+                </table>
+            </div>
             <div class="clearfix">
-                <button class="reset-btn" onclick="resetSubjectData('phy')">⚠️ Clear Accounting Data</button>
+                <button class="reset-btn" onclick="resetSubjectData('phy')">?? Clear Accounting Data</button>
             </div>
         </div>
     </div>
 
-    <!-- 🧪 2. CHEMISTRY CONTAINER (FULL SIZE) -->
+    <!-- ?? 2. BUSINESS STUDIES CONTAINER -->
     <div class="container" style="border-top: 5px solid #ffcc00;">
-        <h2 class="subject-header" style="color: #ffcc00; text-shadow: 0 0 12px rgba(255, 204, 0, 0.5);">🧪 Business Studies Performance Tracker</h2>
+        <h2 class="subject-header" style="color: #ffcc00; text-shadow: 0 0 12px rgba(255, 204, 0, 0.5);">?? Business Studies Performance Tracker</h2>
 
         <div class="input-panel" style="border-left: 5px solid #ffcc00;">
             <div class="input-group">
@@ -309,40 +350,42 @@
             <canvas id="chemChart"></canvas>
         </div>
 
-        <button class="toggle-btn" id="chemToggleBtn" style="color: #ffcc00; border-color: #ffcc00;" onclick="toggleTable('chemTableSection', 'chemToggleBtn', '#ffcc00', 'Chemistry')">
-            ▼ Show Business Studies Table
+        <button class="toggle-btn" id="chemToggleBtn" style="color: #ffcc00; border-color: #ffcc00;" onclick="toggleTable('chemTableSection', 'chemToggleBtn', '#ffcc00', 'Business Studies')">
+            ? Show Business Studies Table
         </button>
 
         <div class="table-section" id="chemTableSection" style="border-top: 4px solid #ffcc00;">
-            <h3 style="color: #ffcc00; margin-bottom: 10px;">📊 Business Studies Score Summary</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th style="text-align: left;">Paper name</th>
-                        <th>Max mark</th>
-                        <th>Your Mark</th>
-                        <th>Percentage(%)</th>
-                        <th>Zone</th>
-                        <th>Remove</th>
-                    </tr>
-                </thead>
-                <tbody id="chemTableBody"></tbody>
-            </table>
+            <h3 style="color: #ffcc00; margin-bottom: 10px;">?? Business Studies Score Summary</h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th style="text-align: left;">Paper name</th>
+                            <th>Max mark</th>
+                            <th>Your Mark</th>
+                            <th>Percentage(%)</th>
+                            <th>Zone</th>
+                            <th>Remove</th>
+                        </tr>
+                    </thead>
+                    <tbody id="chemTableBody"></tbody>
+                </table>
+            </div>
             <div class="clearfix">
-                <button class="reset-btn" onclick="resetSubjectData('chem')">⚠️ Clear B/S Data</button>
+                <button class="reset-btn" onclick="resetSubjectData('chem')">?? Clear B/S Data</button>
             </div>
         </div>
     </div>
 
-    <!-- 📐 3. COMBINED MATHS CONTAINER (FULL SIZE) -->
+    <!-- ?? 3. ICT CONTAINER -->
     <div class="container" style="border-top: 5px solid #11ff00;">
-        <h2 class="subject-header" style="color: #ffffff; text-shadow: 0 0 12px rgba(255, 255, 255, 0.5);">📐 ICT Performance Tracker</h2>
+        <h2 class="subject-header" style="color: #ffffff; text-shadow: 0 0 12px rgba(255, 255, 255, 0.5);">?? ICT Performance Tracker</h2>
 
         <div class="input-panel" style="border-left: 5px solid #11ff00;">
             <div class="input-group">
                 <label>Paper Name</label>
-                <input type="text" id="mathsPaper" placeholder="EX:  Paper 01">
+                <input type="text" id="mathsPaper" placeholder="EX: Paper 01">
             </div>
             <div class="input-group">
                 <label>Max Marks</label>
@@ -359,28 +402,30 @@
             <canvas id="mathsChart"></canvas>
         </div>
 
-        <button class="toggle-btn" id="mathsToggleBtn" style="color: #11ff00; border-color: #11ff00;" onclick="toggleTable('mathsTableSection', 'mathsToggleBtn', '#ff4d4d', 'Combined Maths')">
-            ▼ SHOW ICT TABLE
+        <button class="toggle-btn" id="mathsToggleBtn" style="color: #11ff00; border-color: #11ff00;" onclick="toggleTable('mathsTableSection', 'mathsToggleBtn', '#11ff00', 'ICT')">
+            ? SHOW ICT TABLE
         </button>
 
         <div class="table-section" id="mathsTableSection" style="border-top: 4px solid #11ff00;">
-            <h3 style="color: #11ff00; margin-bottom: 10px;">📊 ICT Score Summary</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th style="text-align: left;">Paper name</th>
-                        <th>Max mark</th>
-                        <th>Your Mark</th>
-                        <th>Percentage(%)</th>
-                        <th>Zone</th>
-                        <th>Remove</th>
-                    </tr>
-                </thead>
-                <tbody id="mathsTableBody"></tbody>
-            </table>
+            <h3 style="color: #11ff00; margin-bottom: 10px;">?? ICT Score Summary</h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th style="text-align: left;">Paper name</th>
+                            <th>Max mark</th>
+                            <th>Your Mark</th>
+                            <th>Percentage(%)</th>
+                            <th>Zone</th>
+                            <th>Remove</th>
+                        </tr>
+                    </thead>
+                    <tbody id="mathsTableBody"></tbody>
+                </table>
+            </div>
             <div class="clearfix">
-                <button class="reset-btn" onclick="resetSubjectData('maths')">⚠️ Clear ICT Data</button>
+                <button class="reset-btn" onclick="resetSubjectData('maths')">?? Clear ICT Data</button>
             </div>
         </div>
     </div>
@@ -388,37 +433,33 @@
     <script>
         Chart.register(window['chartjs-plugin-annotation']);
 
-        // 🎆 1. SIDE FIREWORKS + 'A' BURST ANIMATION LOGIC
+        // ?? 1. SIDE FIREWORKS + 'A' BURST ANIMATION LOGIC
         function launchFirework(containerId) {
             const container = document.getElementById(containerId);
             if (!container) return;
 
-            // Rocket Element Creation
             const rocket = document.createElement('div');
             rocket.className = 'firework-rocket';
             
-            const startX = Math.random() * 40 + 25; // 25px - 65px X axis inside side margin
+            const maxW = container.clientWidth || 40;
+            const startX = Math.random() * (maxW - 20) + 10; 
             rocket.style.left = startX + 'px';
             rocket.style.bottom = '0px';
             container.appendChild(rocket);
 
-            const targetY = window.innerHeight * (0.60 + Math.random() * 0.25); // Target height 60% - 85% of screen
-            const flightDuration = 1000 + Math.random() * 400; // 1.0s to 1.4s
-
+            const targetY = window.innerHeight * (0.55 + Math.random() * 0.30);
+            const flightDuration = 1000 + Math.random() * 400;
             const startTime = performance.now();
 
             function animateRocket(currentTime) {
                 const elapsed = currentTime - startTime;
                 const progress = Math.min(elapsed / flightDuration, 1);
-                
-                // Ease-out rocket motion
                 const currentY = targetY * (1 - Math.pow(1 - progress, 2));
                 rocket.style.bottom = currentY + 'px';
 
                 if (progress < 1) {
                     requestAnimationFrame(animateRocket);
                 } else {
-                    // Rocket Explosions!
                     rocket.remove();
                     explodeA(container, startX, currentY);
                 }
@@ -426,9 +467,8 @@
             requestAnimationFrame(animateRocket);
         }
 
-        // 'A' Grade Explosion Particles Logic
         function explodeA(container, centerX, centerY) {
-            const particleCount = 10;
+            const particleCount = window.innerWidth < 600 ? 7 : 10;
             const colors = ['#00ffcc', '#ffcc00', '#00e676', '#ffffff', '#ff4d4d', '#ff00ff'];
 
             for (let i = 0; i < particleCount; i++) {
@@ -438,30 +478,28 @@
                 
                 const color = colors[Math.floor(Math.random() * colors.length)];
                 particle.style.color = color;
-                particle.style.textShadow = `0 0 10px ${color}, 0 0 20px ${color}, 0 0 30px ${color}`;
+                particle.style.textShadow = `0 0 10px ${color}, 0 0 20px ${color}`;
                 particle.style.left = centerX + 'px';
                 particle.style.bottom = centerY + 'px';
                 
                 container.appendChild(particle);
 
-                // Angle and Distance calculation
                 const angle = (Math.PI * 2 / particleCount) * i + (Math.random() * 0.4 - 0.2);
-                const distance = 50 + Math.random() * 60; // explosion radius
+                const distance = (window.innerWidth < 600 ? 35 : 50) + Math.random() * 50; 
                 const targetX = centerX + Math.cos(angle) * distance;
                 const targetY = centerY + Math.sin(angle) * distance;
 
-                const explodeDuration = 1200;
+                const explodeDuration = 1100;
                 const startTime = performance.now();
 
                 function animateParticle(currentTime) {
                     const elapsed = currentTime - startTime;
                     const progress = Math.min(elapsed / explodeDuration, 1);
-                    
                     const curX = centerX + (targetX - centerX) * (1 - Math.pow(1 - progress, 3));
-                    const gravity = progress * progress * 35; // Gravity pull down
+                    const gravity = progress * progress * 30;
                     const curY = centerY + (targetY - centerY) * (1 - Math.pow(1 - progress, 3)) - gravity;
                     
-                    const scale = 0.8 + progress * 0.7;
+                    const scale = 0.8 + progress * 0.6;
                     const opacity = 1 - progress;
 
                     particle.style.left = curX + 'px';
@@ -479,7 +517,6 @@
             }
         }
 
-        // Trigger Side Fireworks
         function triggerSideFireworks() {
             launchFirework('sideLeft');
             setTimeout(() => {
@@ -487,11 +524,10 @@
             }, 500);
         }
 
-        // Start fireworks loop
         triggerSideFireworks();
         setInterval(triggerSideFireworks, 4500);
 
-        // 🌟 2. LINE RUNNER PLUGIN & ZONE COLOR LOGIC
+        // ?? 2. LINE RUNNER PLUGIN & ZONE COLOR LOGIC
         let pulseProgress = 0;
 
         function getZoneColor(val) {
@@ -544,7 +580,6 @@
                 ctx.save();
                 const currentDist = (pulseProgress % 1) * totalLength;
 
-                // Comet Tail
                 const trailCount = 15;
                 const trailSpan = 60;
                 for (let i = trailCount; i >= 0; i--) {
@@ -564,7 +599,6 @@
                     ctx.fill();
                 }
 
-                // Head Core
                 const headPt = getPointAtDistance(currentDist);
                 const headVal = yScale.getValueForPixel(headPt.y);
                 const headColor = getZoneColor(headVal);
@@ -576,7 +610,6 @@
                 ctx.shadowBlur = 20;
                 ctx.fill();
 
-                // Pulsating Ring
                 const pulseRadius = 10 + Math.sin(Date.now() / 120) * 3;
                 ctx.beginPath();
                 ctx.arc(headPt.x, headPt.y, pulseRadius, 0, Math.PI * 2);
@@ -592,8 +625,9 @@
 
         Chart.register(lineRunnerPlugin);
 
-        // Chart Config Creator Function
+        // Chart Config Creator Function (With Responsive Font Sizes)
         function buildFullChartConfig(accentHex) {
+            const isMobile = window.innerWidth < 600;
             return {
                 type: 'line',
                 data: {
@@ -606,8 +640,8 @@
                         pointBackgroundColor: '#ffffff',
                         pointBorderColor: accentHex,
                         pointBorderWidth: 3,
-                        pointRadius: 6,
-                        pointHoverRadius: 9,
+                        pointRadius: isMobile ? 4 : 6,
+                        pointHoverRadius: isMobile ? 6 : 9,
                         tension: 0,
                         fill: false
                     }]
@@ -620,31 +654,31 @@
                             beginAtZero: true,
                             max: 100,
                             grid: { color: 'rgba(255, 255, 255, 0.1)' },
-                            ticks: { color: '#cccccc', font: { size: 12 } }
+                            ticks: { color: '#cccccc', font: { size: isMobile ? 10 : 12 } }
                         },
                         x: {
                             grid: { color: 'rgba(255, 255, 255, 0.05)' },
-                            ticks: { color: '#cccccc', font: { size: 12 } }
+                            ticks: { color: '#cccccc', font: { size: isMobile ? 10 : 12 } }
                         }
                     },
                     plugins: {
-                        legend: { labels: { color: '#ffffff' } },
+                        legend: { labels: { color: '#ffffff', font: { size: isMobile ? 11 : 13 } } },
                         annotation: {
                             annotations: {
                                 riskZone: {
                                     type: 'box', yMin: 0, yMax: 65,
                                     backgroundColor: 'rgba(255, 77, 77, 0.15)', borderWidth: 0,
-                                    label: { display: true, content: 'RISK ZONE (<65%)', position: 'start', color: '#ff4d4d', font: { weight: 'bold' } }
+                                    label: { display: true, content: 'RISK (<65%)', position: 'start', color: '#ff4d4d', font: { size: isMobile ? 9 : 11, weight: 'bold' } }
                                 },
                                 youCanZone: {
                                     type: 'box', yMin: 65, yMax: 75,
                                     backgroundColor: 'rgba(255, 204, 0, 0.15)', borderWidth: 0,
-                                    label: { display: true, content: 'YOU CAN (65%-75%)', position: 'start', color: '#ffcc00', font: { weight: 'bold' } }
+                                    label: { display: true, content: 'YOU CAN (65%-75%)', position: 'start', color: '#ffcc00', font: { size: isMobile ? 9 : 11, weight: 'bold' } }
                                 },
                                 safeZone: {
                                     type: 'box', yMin: 75, yMax: 100,
                                     backgroundColor: 'rgba(41, 204, 151, 0.15)', borderWidth: 0,
-                                    label: { display: true, content: 'SAFE ZONE (>75%)', position: 'start', color: '#00ffcc', font: { weight: 'bold' } }
+                                    label: { display: true, content: 'SAFE (>75%)', position: 'start', color: '#00ffcc', font: { size: isMobile ? 9 : 11, weight: 'bold' } }
                                 }
                             }
                         }
@@ -653,7 +687,7 @@
             };
         }
 
-        // 🌟 DATA INITIALIZATION FOR ALL 3 SUBJECTS
+        // ?? DATA INITIALIZATION
         let phyData = JSON.parse(localStorage.getItem('phyRecords')) || [
             { id: 1, name: 'accounting Paper 1', max: 100, obtained: 58, percentage: 58.00 },
             { id: 2, name: 'accounting Paper 2', max: 100, obtained: 70, percentage: 70.00 },
@@ -672,12 +706,10 @@
             { id: 3, name: 'ict Paper 3', max: 100, obtained: 82, percentage: 82.00 }
         ];
 
-        // Create Charts
         const phyChart = new Chart(document.getElementById('phyChart').getContext('2d'), buildFullChartConfig('#00ffcc'));
         const chemChart = new Chart(document.getElementById('chemChart').getContext('2d'), buildFullChartConfig('#ffcc00'));
         const mathsChart = new Chart(document.getElementById('mathsChart').getContext('2d'), buildFullChartConfig('#ff4d4d'));
 
-        // Continuous Animation Loop
         function animateRunners() {
             pulseProgress += 0.003;
             if (pulseProgress > 1) pulseProgress = 0;
@@ -695,7 +727,6 @@
             localStorage.setItem('mathsRecords', JSON.stringify(mathsData));
         }
 
-        // Render Tables & Update Charts
         function updateSubjectUI(key, dataset, chartObj, tableBodyId, accentColor) {
             chartObj.data.labels = dataset.map(r => r.name);
             chartObj.data.datasets[0].data = dataset.map(r => r.percentage);
@@ -705,7 +736,7 @@
             tbody.innerHTML = '';
 
             if (dataset.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="7" style="color: #888; padding: 20px;">තවම දත්ත කිසිවක් ඇතුළත් කර නැත.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="7" style="color: #888; padding: 20px;">??? ???? ??????? ?????? ?? ???.</td></tr>';
                 return;
             }
 
@@ -721,7 +752,7 @@
                     <td>${rec.obtained}</td>
                     <td style="color: ${accentColor}; font-weight: bold; font-size: 15px;">${rec.percentage}%</td>
                     <td><span class="badge ${badgeClass}">${zoneText}</span></td>
-                    <td><button class="del-btn" onclick="deleteSubjectRecord('${key}', ${rec.id})">🗑️ ඉවත් කරන්න</button></td>
+                    <td><button class="del-btn" onclick="deleteSubjectRecord('${key}', ${rec.id})">??? Remove</button></td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -730,10 +761,9 @@
         function refreshAllUI() {
             updateSubjectUI('phy', phyData, phyChart, 'phyTableBody', '#00ffcc');
             updateSubjectUI('chem', chemData, chemChart, 'chemTableBody', '#ffcc00');
-            updateSubjectUI('maths', mathsData, mathsChart, 'mathsTableBody', '#ff4d4d');
+            updateSubjectUI('maths', mathsData, mathsChart, 'mathsTableBody', '#11ff00');
         }
 
-        // Add Record Handler
         function addSubjectRecord(subKey) {
             const paperInput = document.getElementById(`${subKey}Paper`);
             const maxInput = document.getElementById(`${subKey}Max`);
@@ -744,7 +774,7 @@
             const obtained = parseFloat(obtainedInput.value);
 
             if (!name || isNaN(max) || isNaN(obtained) || max <= 0) {
-                alert("කරුණාකර සියලුම තොරතුරු නිවැරදිව ඇතුළත් කරන්න!");
+                alert("??????? ?????? ??????? ???????? ?????? ?????!");
                 return;
             }
 
@@ -763,7 +793,6 @@
             paperInput.focus();
         }
 
-        // Delete Handler
         function deleteSubjectRecord(subKey, id) {
             if (confirm("Are You Sure Clear All Data")) {
                 if (subKey === 'phy') phyData = phyData.filter(r => r.id !== id);
@@ -775,9 +804,8 @@
             }
         }
 
-        // Reset Handler
         function resetSubjectData(subKey) {
-            if (confirm("ඔබට මෙම විශයේ සියලුම දත්ත මකා දමන්න අවශ්‍යද?")) {
+            if (confirm("??? ??? ????? ?????? ???? ??? ????? ????????")) {
                 if (subKey === 'phy') phyData = [];
                 if (subKey === 'chem') chemData = [];
                 if (subKey === 'maths') mathsData = [];
@@ -787,18 +815,17 @@
             }
         }
 
-        // Toggle Table Section
         function toggleTable(sectionId, btnId, colorHex, subTitle) {
             const section = document.getElementById(sectionId);
             const btn = document.getElementById(btnId);
             
             if (section.style.display === 'none' || section.style.display === '') {
                 section.style.display = 'block';
-                btn.innerHTML = `▲ ${subTitle} Hide Table`;
+                btn.innerHTML = `? Hide ${subTitle} Table`;
                 section.scrollIntoView({ behavior: 'smooth' });
             } else {
                 section.style.display = 'none';
-                btn.innerHTML = `▼ ${subTitle} Show ${subTitle} Table`;
+                btn.innerHTML = `? Show ${subTitle} Table`;
             }
         }
 
